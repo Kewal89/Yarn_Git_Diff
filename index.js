@@ -23,7 +23,8 @@ async function fetchParentCommit(owner, repository, headOid) {
       console.warn("No Parent")
     }
   } catch (error) {
-    console.error("Error :", error.message)
+    return ""
+    console.warn("Error fetchParentCommit :", error.message)
   }
 }
 
@@ -32,8 +33,6 @@ app.get("/repositories/:owner/:repository/commits/:oid", async (req, res) => {
   const { owner, repository, oid } = req.params
   const githubApiUrl = `https://api.github.com/repos/${owner}/${repository}/commits/${oid}`
   const parentOid = await fetchParentCommit(owner, repository, oid)
-
-  console.info("Data :", githubApiUrl)
 
   try {
     const response = TEST ? "" : await axios.get(githubApiUrl)
@@ -68,7 +67,7 @@ app.get("/repositories/:owner/:repository/commits/:oid", async (req, res) => {
 
     res.json(result)
   } catch (error) {
-    console.error("Error :", error.message)
+    console.error("Error CommitById :", error.message)
     res.status(500).json({ error: "Internal Server Error" })
   }
 })
@@ -104,7 +103,7 @@ const parsePatch = (patchString) => {
       }
       if (lineType === " " || lineType === "+") {
         headLineNumber++
-      } 
+      }
     }
   }
 
@@ -132,7 +131,7 @@ async function fetchCommitDiff(owner, repository, baseOid, headOid) {
 
     return output
   } catch (error) {
-    throw new Error(`Error fetching commit diff: ${error.message}`)
+    console.error("Error fetchCommitDiff :", error.message)
   }
 }
 
@@ -144,7 +143,7 @@ app.get("/repositories/:owner/:repository/commits/:oid/diff/", async (req, res) 
     const diffData = await fetchCommitDiff(owner, repository, parentOid, oid)
     res.json(diffData)
   } catch (error) {
-    console.error(error.message)
+    console.error("Error Difference API :", error.message)
     res.status(500).json({ error: "Internal Server Error" })
   }
 })
