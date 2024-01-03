@@ -8,7 +8,7 @@ const app = express()
 const port = 5000
 
 app.use(express.json())
-const TEST = true
+const TEST = false
 
 async function fetchParentCommit(owner, repository, headOid) {
   const githubApiUrl = `https://api.github.com/repos/${owner}/${repository}/commits/${headOid}`
